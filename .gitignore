@@ -23,3 +23,5 @@ dist/
 # backup
 backup/
 
+*.csv
+*.txt
