@@ -237,23 +237,53 @@ def main():
     args = parser.parse_args()
     sc = pysparkling.Context()
 
+    # Edeka
+    args.obs_len = 8
+    args.fps = 2
+    args.chunk_stride = 20
+    args.acceptance = [1.0, 1.0, 1.0, 1.0]
+    args.inter_dist_thresh = 10.0
+    args.inter_pos_range = 180.0
+
+    # My Training set
+    args.train_fraction = 1.0
+    args.val_fraction = 0.0
+    
+    write(lcas(sc, "data/screen/edeka/train.txt"),
+            "output_pre/{split}/train_edeka.ndjson", args)
+    categorize(sc, 'output_pre/{split}/train_edeka.ndjson', args)
+
+    # My val set 
+    args.train_fraction = 0.0
+    args.val_fraction = 1.0
+    write(lcas(sc, "data/screen/edeka/val.txt"),
+            "output_pre/{split}/val_edeka.ndjson", args)
+    categorize(sc, 'output_pre/{split}/val_edeka.ndjson', args)
+
+    # My test set
+    args.train_fraction = 0.0 
+    args.val_fraction = 0.0
+    write(lcas(sc, "data/screen/edeka/test.txt"),
+            "output_pre/{split}/test_edeka.ndjson", args)
+    categorize(sc, 'output_pre/{split}/test_edeka.ndjson', args)
+
     # Real datasets conversion
-    if not args.synthetic:
-        write(biwi(sc, 'data/raw/biwi/seq_hotel/obsmat.txt'),
-              'output_pre/{split}/biwi_hotel.ndjson', args)
-        categorize(sc, 'output_pre/{split}/biwi_hotel.ndjson', args)
-        write(crowds(sc, 'data/raw/crowds/crowds_zara01.vsp'),
-              'output_pre/{split}/crowds_zara01.ndjson', args)
-        categorize(sc, 'output_pre/{split}/crowds_zara01.ndjson', args)
-        write(crowds(sc, 'data/raw/crowds/crowds_zara03.vsp'),
-              'output_pre/{split}/crowds_zara03.ndjson', args)
-        categorize(sc, 'output_pre/{split}/crowds_zara03.ndjson', args)
-        write(crowds(sc, 'data/raw/crowds/students001.vsp'),
-              'output_pre/{split}/crowds_students001.ndjson', args)
-        categorize(sc, 'output_pre/{split}/crowds_students001.ndjson', args)
-        write(crowds(sc, 'data/raw/crowds/students003.vsp'),
-              'output_pre/{split}/crowds_students003.ndjson', args)
-        categorize(sc, 'output_pre/{split}/crowds_students003.ndjson', args)
+    # if not args.synthetic:
+    #     write(biwi(sc, 'data/raw/biwi/seq_hotel/obsmat.txt'),
+    #           'output_pre/{split}/biwi_hotel.ndjson', args)
+    #     categorize(sc, 'output_pre/{split}/biwi_hotel.ndjson', args)
+    #     write(crowds(sc, 'data/raw/crowds/crowds_zara01.vsp'),
+    #           'output_pre/{split}/crowds_zara01.ndjson', args)
+    #     categorize(sc, 'output_pre/{split}/crowds_zara01.ndjson', args)
+    #     write(crowds(sc, 'data/raw/crowds/crowds_zara03.vsp'),
+    #           'output_pre/{split}/crowds_zara03.ndjson', args)
+    #     categorize(sc, 'output_pre/{split}/crowds_zara03.ndjson', args)
+    #     write(crowds(sc, 'data/raw/crowds/students001.vsp'),
+    #           'output_pre/{split}/crowds_students001.ndjson', args)
+    #     categorize(sc, 'output_pre/{split}/crowds_students001.ndjson', args)
+    #     write(crowds(sc, 'data/raw/crowds/students003.vsp'),
+    #           'output_pre/{split}/crowds_students003.ndjson', args)
+    #     categorize(sc, 'output_pre/{split}/crowds_students003.ndjson', args)
 
         # # # new datasets
         # write(lcas(sc, 'data/raw/lcas/test/data.csv'),
@@ -277,13 +307,13 @@ def main():
         # args.order_frames = False # (Default)
 
     # Synthetic datasets conversion
-    else:
-        # Note: Generate Trajectories First! See command below
-        ## 'python -m trajnetdataset.controlled_data <args>'
-        write(controlled(sc, 'data/raw/controlled/orca_circle_crossing_5ped_1000scenes_.txt'),
-              'output_pre/{split}/orca_five_synth.ndjson', args)
-        categorize(sc, 'output_pre/{split}/orca_five_synth.ndjson', args)
-        edit_goal_file('orca_circle_crossing_5ped_1000scenes_.pkl', 'orca_five_synth.pkl')
+    # else:
+    #     # Note: Generate Trajectories First! See command below
+    #     ## 'python -m trajnetdataset.controlled_data <args>'
+    #     write(controlled(sc, 'data/raw/controlled/orca_circle_crossing_5ped_1000scenes_.txt'),
+    #           'output_pre/{split}/orca_five_synth.ndjson', args)
+    #     categorize(sc, 'output_pre/{split}/orca_five_synth.ndjson', args)
+    #     edit_goal_file('orca_circle_crossing_5ped_1000scenes_.pkl', 'orca_five_synth.pkl')
 
 if __name__ == '__main__':
     main()
